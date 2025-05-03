@@ -44,7 +44,7 @@
             </div>
             <div class="flex gap-x-4">
                 <button id="cancelButton" class="w-full py-2 border-2 rounded text-black hover:bg-gray-100">Cancel</button>
-                <a href="team-detail.html" id="confirmButton" class="w-full text-center py-2 bg-black text-white rounded">Confirm</a>
+                <a href="<?= BASEURL; ?>/teams" id="confirmButton" class="w-full text-center py-2 bg-black text-white rounded">Confirm</a>
             </div>
         </div>
     </div>

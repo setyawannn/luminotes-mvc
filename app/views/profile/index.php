@@ -30,58 +30,34 @@
                 </select>
             </div>
             <div class="mt-6 flex flex-col gap-y-12">
+                <?php foreach($data['notes'] as $note): ?>
                 <div>
                     <div class="flex gap-x-3 items-center">
-                        <img class="w-8 h-8 rounded-full object-cover" src="<?= BASEURL; ?>/img/person/person1.png" alt="Person 1">
-                        <p>Aristoteles</p>
+                        <img class="w-8 h-8 rounded-full object-cover" src="<?= BASEURL; ?>/img/person/<?= $note['creator']['image']; ?>" alt="<?= $note['creator']['name']; ?>">
+                        <p><?= $note['creator']['name']; ?></p>
                     </div>
                     <div class="flex justify-between gap-x-4">
                         <div class="w-2/3">
-                            <h2 class="font-medium text-xl">Pemrograman Dasar Tiper Variable</h2>
-                            <p>Menjelaskan tentang variable yang ada pada java</p>
+                            <h2 class="font-medium text-xl"><?= $note['title']; ?></h2>
+                            <p><?= $note['description']; ?></p>
                         </div>
                         <div class="w-1/3">
-                            <img src="<?= BASEURL; ?>/img/thubmnail/java.png" alt="Java">
-                            <p class="rounded-full text-sm border-2 p-1 mt-3 w-fit text-center">Pemrograman</p>
+                            <img src="<?= BASEURL; ?>/img/thubmnail/<?= $note['thumbnail']; ?>" alt="<?= $note['category']; ?>">
+                            <p class="rounded-full text-sm border-2 p-1 mt-3 w-fit text-center"><?= $note['category']; ?></p>
                         </div>
                     </div>
                     <div class="mt-4 flex gap-x-6">
                         <div class="flex gap-x-3">
                             <img src="<?= BASEURL; ?>/img/icons/star-filled.svg" alt="star-filled">
-                            <p>4.5</p>
+                            <p><?= $note['rating']; ?></p>
                         </div>
                         <div class="flex gap-x-3">
                             <img src="<?= BASEURL; ?>/img/icons/calendar-today.svg" alt="calendar-today">
-                            <p>16 Feb 24</p>
+                            <p><?= $note['created_at']; ?></p>
                         </div>
                     </div>
                 </div>
-                <div>
-                    <div class="flex gap-x-3 items-center">
-                        <img class="w-8 h-8 rounded-full object-cover" src="<?= BASEURL; ?>/img/person/person2.png" alt="Person 2">
-                        <p>Max Varstepen</p>
-                    </div>
-                    <div class="flex justify-between gap-x-4">
-                        <div class="w-2/3">
-                            <h2 class="font-medium text-xl">Matematika Diskrit Teori Bilangan</h2>
-                            <p>Menjelaskan tentang variable yang ada pada java</p>
-                        </div>
-                        <div class="w-1/3">
-                            <img src="<?= BASEURL; ?>/img/thubmnail/math.png" alt="Java">
-                            <p class="rounded-full text-sm border-2 p-1 mt-3 text-center w-fit">Matematika</p>
-                        </div>
-                    </div>
-                    <div class="mt-4 flex gap-x-6">
-                        <div class="flex gap-x-3">
-                            <img src="<?= BASEURL; ?>/img/icons/star-filled.svg" alt="star-filled">
-                            <p>4.5</p>
-                        </div>
-                        <div class="flex gap-x-3">
-                            <img src="<?= BASEURL; ?>/img/icons/calendar-today.svg" alt="calendar-today">
-                            <p>16 Feb 24</p>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
