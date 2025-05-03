@@ -1,0 +1,19 @@
+{
+  "name": "luminotes-mvc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev" : "npx @tailwindcss/cli -i ./public/css/tailwind-input.css -o ./public/css/tailwind.css --watch",
+    "build" : "npx @tailwindcss/cli -i ./public/css/tailwind-input.css -o ./public/css/tailwind.css --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.9.0",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.5",
+    "tailwindcss": "^4.1.5"
+  }
+}
