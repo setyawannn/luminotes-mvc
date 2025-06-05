@@ -1,76 +1,29 @@
-<?php 
+<?php
 
-class Database {
-    private $host = DB_HOST;
-    private $user = DB_USER;
-    private $pass = DB_PASS;
-    private $db_name = DB_NAME;
+class Model {
+    protected $db; 
 
-    private $dbh;
-    private $stmt;
+    public function __construct() {
+        $host = DB_HOST; 
+        $user = DB_USER;
+        $pass = DB_PASS;
+        $db_name = DB_NAME; 
 
-    public function __construct()
-    {
-        $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->db_name;
+        $this->db = new mysqli($host, $user, $pass, $db_name);
+        
+        if ($this->db->connect_error) {
+            error_log("Koneksi Database Gagal: (" . $this->db->connect_errno . ") " . $this->db->connect_error);
+            die("Koneksi Database Gagal. Silakan coba beberapa saat lagi.");
+        }
 
-        $option = [
-            PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        ];
-
-        try {
-            $this->dbh = new PDO($dsn, $this->user, $this->pass, $option);
-        } catch(PDOException $e) {
-            die($e->getMessage());
+        if (!$this->db->set_charset("utf8mb4")) {
+            error_log("Error saat mengatur character set utf8mb4: " . $this->db->error);
         }
     }
 
-    public function query($query)
-    {
-        $this->stmt = $this->dbh->prepare($query);
-    }
-
-    public function bind($param, $value, $type = null)
-    {
-        if( is_null($type) ) {
-            switch( true ) {
-                case is_int($value) :
-                    $type = PDO::PARAM_INT;
-                    break;
-                case is_bool($value) :
-                    $type = PDO::PARAM_BOOL;
-                    break;
-                case is_null($value) :
-                    $type = PDO::PARAM_NULL;
-                    break;
-                default :
-                    $type = PDO::PARAM_STR;
-            }
+    public function __destruct() {
+        if ($this->db) {
+            $this->db->close();
         }
-
-        $this->stmt->bindValue($param, $value, $type);
     }
-
-    public function execute()
-    {
-        $this->stmt->execute();
-    }
-
-    public function resultSet()
-    {
-        $this->execute();
-        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function single()
-    {
-        $this->execute();
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function rowCount()
-    {
-        return $this->stmt->rowCount();
-    }
-
 }

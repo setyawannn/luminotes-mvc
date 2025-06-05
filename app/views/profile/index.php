@@ -6,13 +6,16 @@
             <div class="flex gap-x-4">
                 <img src="<?= BASEURL; ?>/img/person/person1.png" alt="Person1" class="h-16 w-16 object-cover rounded-full">
                 <div>
-                    <h4 class="text-xl">Aristoteles</h4>
-                    <p class="text-sm">Seorang mahasiswa FILKOM</p>
+                    <h4 class="text-xl"><?= $_SESSION['user_name']; ?></h4>
+                    <p class="text-sm"><?= $_SESSION['user_desc']; ?></p>
                 </div>
             </div>
             <div class="w-full flex gap-x-3 mt-4">
                 <a href="#" class="py-1 border-2 rounded w-full text-center">Edit Profile</a>
                 <a href="<?= BASEURL; ?>/teams" class="py-1 border-2 rounded w-full text-center">Teams</a>
+            </div>
+            <div class="mt-4">
+                <a href="<?= BASEURL; ?>/auth/logout" class="py-1 border-2 border-red-600 text-red-600 rounded w-full block  text-center">Logout</a>
             </div>
             <div class="mt-4">
                 <ul class="flex gap-x-4 text-lg border-b-1">
