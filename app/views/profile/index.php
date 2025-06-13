@@ -33,7 +33,7 @@
                 <?php foreach($data['notes'] as $note): ?>
                 <div>
                     <div class="flex gap-x-3 items-center">
-                        <img class="w-8 h-8 rounded-full object-cover" src="<?= BASEURL; ?>/img/person/<?= $note['creator']['image']; ?>" alt="<?= $note['creator']['name']; ?>">
+                        <img class="w-8 h-8 rounded-full object-cover" src="<?= BASEURL; ?>/img/person/<?= $note['creator']['img']; ?>" alt="<?= $note['creator']['name']; ?>">
                         <p><?= $note['creator']['name']; ?></p>
                     </div>
                     <div class="flex justify-between gap-x-4">

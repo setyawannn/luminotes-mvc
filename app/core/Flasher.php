@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class Flasher {
     public static function setFlash($pesan, $aksi, $tipe)
@@ -9,14 +9,13 @@ class Flasher {
             'tipe'  => $tipe
         ];
     }
-
     public static function flash()
     {
         if( isset($_SESSION['flash']) ) {
             $bgColor = 'bg-gray-100';
             $textColor = 'text-gray-800';
             $borderColor = 'border-gray-200';
-            
+
             switch($_SESSION['flash']['tipe']) {
                 case 'success':
                     $bgColor = 'bg-green-100';
@@ -39,7 +38,8 @@ class Flasher {
                     $borderColor = 'border-blue-200';
                     break;
             }
-            
+
+            // Tampilan Flasher menggunakan Tailwind CSS
             echo '<div class="rounded-md border ' . $borderColor . ' ' . $bgColor . ' px-4 py-3 relative mb-4" role="alert">
                     <div class="flex">
                         <div class="py-1">
@@ -48,16 +48,14 @@ class Flasher {
                             </svg>
                         </div>
                         <div>
-                            <p class="font-bold ' . $textColor . '">Data Mahasiswa <strong>' . $_SESSION['flash']['pesan'] . '</strong> ' . $_SESSION['flash']['aksi'] . '</p>
+                            <p class="font-bold ' . $textColor . '">Catatan <strong>' . $_SESSION['flash']['pesan'] . '</strong> ' . $_SESSION['flash']['aksi'] . '</p>
                         </div>
                     </div>
-                    <button class="absolute top-0 right-0 mt-2 mr-2 ' . $textColor . '" onclick="this.parentElement.remove()">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                    <button type="button" class="absolute top-0 right-0 mt-2 mr-2 ' . $textColor . '" onclick="this.parentElement.style.display=\'none\';" aria-label="Close">
+                        <svg class="fill-current h-6 w-6" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
                     </button>
                 </div>';
-            unset($_SESSION['flash']);
+            unset($_SESSION['flash']); // Hapus flash message setelah ditampilkan
         }
     }
 }

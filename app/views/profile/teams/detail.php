@@ -17,7 +17,7 @@
             <div class="mb-4">
                 <h6>Team Leader</h6>
                 <div class="flex items-center gap-x-4">
-                    <img src="<?= BASEURL . '/img/person/' . $data['teamData']['leader']['image'] ?>" alt="Person1"
+                    <img src="<?= BASEURL . '/img/person/' . $data['teamData']['leader']['img'] ?>" alt="Person1"
                         class="w-10 h-10 object-cover rounded-full">
                     <p><?= $data['teamData']['leader']['name'] ?></p>
                 </div>
@@ -28,7 +28,7 @@
                     <?php foreach($data['teamData']['members'] as $member) : ?>
                         <div class="flex items-center justify-between gap-x-4">
                             <div class="flex items-center gap-x-4">
-                                <img src="<?= BASEURL . '/img/person/' . $member['image'] ?>" alt="Person1"
+                                <img src="<?= BASEURL . '/img/person/' . $member['img'] ?>" alt="Person1"
                                     class="w-10 h-10 object-cover rounded-full">
                                 <p><?= $member['name'] ?></p>
                             </div>

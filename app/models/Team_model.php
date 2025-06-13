@@ -73,24 +73,24 @@ class Team_model {
         $leader = [
             'id' => 1,
             'name' => 'Aristoteles',
-            'image' => 'person1.png'
+            'img' => 'person1.png'
         ];
         
         $members = [
             [
                 'id' => 1,
                 'name' => 'Aristoteles',
-                'image' => 'person1.png'
+                'img' => 'person1.png'
             ],
             [
                 'id' => 2,
                 'name' => 'Max Marstepen',
-                'image' => 'person2.png'
+                'img' => 'person2.png'
             ],
             [
                 'id' => 3,
                 'name' => 'Emma Watson',
-                'image' => 'person3.png'
+                'img' => 'person3.png'
             ]
         ];
         
