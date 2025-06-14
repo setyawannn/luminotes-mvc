@@ -1,6 +1,23 @@
 <?php
 
 class Notes extends Controller {
+
+    public function __construct() {
+        if (!isset($_SESSION['user_id'])) {
+            Flasher::setFlash('Akses ditolak!', 'Silakan login terlebih dahulu.', 'danger');
+            header('Location: ' . BASEURL . '/auth/login');
+            exit;
+        }
+    }
+
+    private function _checkDir($path) {
+        if (!is_dir($path)) {
+            if (!@mkdir($path, 0755, true)) {
+                throw new Exception("Gagal membuat folder upload di '{$path}'. Periksa izin server.");
+            }
+        }
+    }
+
     public function detail($id) {
         $data['judul'] = 'Detail Catatan';
         $data['note'] = $this->model('Note_model')->getNoteById($id);
@@ -45,6 +62,9 @@ class Notes extends Controller {
 
             $pdfFileName = md5(time() . $fileName) . '.' . $fileExtension;
             $uploadFileDir = './uploads/notes/'; 
+            
+            $this->_checkDir($uploadFileDir);
+            
             $dest_path = $uploadFileDir . $pdfFileName;
 
             if (!move_uploaded_file($fileTmpPath, $dest_path)) {
@@ -57,12 +77,12 @@ class Notes extends Controller {
                 'topics' => $_POST['topics'],
                 'is_public' => $_POST['is_public'],
                 'team_id' => !empty($_POST['team_id']) ? $_POST['team_id'] : null,
-                'pdf_file' => BASEURL . '/uploads/notes/' . $pdfFileName 
+                'pdf_filename' => $pdfFileName, 
+                'pdf_file_url' => BASEURL . '/uploads/notes/' . $pdfFileName 
             ];
             
             $data['judul'] = 'Preview Catatan';
             $data['preview_data'] = $_SESSION['note_preview_data'];
-            
             $this->view('templates/header', $data);
             $this->view('notes/preview', $data);
             $this->view('templates/footer');
@@ -81,8 +101,8 @@ class Notes extends Controller {
             exit;
         }
 
-        $thumbnailFileName = null;
-        $pdfFilePath = './uploads/notes/' . $_SESSION['note_preview_data']['pdf_file'];
+        $thumbnailFileName = null; 
+        $pdfFilePathForUnlink = './uploads/notes/' . $_SESSION['note_preview_data']['pdf_filename'];
 
         try {
             if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] === UPLOAD_ERR_OK) {
@@ -97,11 +117,20 @@ class Notes extends Controller {
 
                 $thumbnailFileName = md5(time() . 'thumb' . $fileName) . '.' . $fileExtension;
                 $uploadFileDir = './uploads/thumbnails/';
+                
+                $this->_checkDir($uploadFileDir);
+
                 $dest_path = $uploadFileDir . $thumbnailFileName;
 
                 if(!move_uploaded_file($fileTmpPath, $dest_path)) {
                     throw new Exception("Gagal mengupload thumbnail.");
                 }
+            }
+
+            $pdfFullUrl = $_SESSION['note_preview_data']['pdf_file_url'];
+            $thumbnailFullUrl = null;
+            if ($thumbnailFileName) {
+                $thumbnailFullUrl = BASEURL . '/uploads/thumbnails/' . $thumbnailFileName;
             }
 
             $finalData = [
@@ -110,8 +139,8 @@ class Notes extends Controller {
                 'category' => $_SESSION['note_preview_data']['topics'],
                 'is_public' => $_SESSION['note_preview_data']['is_public'],
                 'team_id' => $_SESSION['note_preview_data']['team_id'],
-                'file' => $_SESSION['note_preview_data']['pdf_file'],
-                'thumbnail' => BASEURL . '/uploads/thumbnails/' . $thumbnailFileName,
+                'file' => $pdfFullUrl, 
+                'thumbnail' => $thumbnailFullUrl, 
                 'status' => 'pending',
                 'creator_id' => $_SESSION['user_id']
             ];
@@ -120,22 +149,22 @@ class Notes extends Controller {
                 throw new Exception("Gagal menyimpan data catatan ke database.");
             }
 
-            unset($_SESSION['note_preview_data']); 
+            unset($_SESSION['note_preview_data']);
             Flasher::setFlash('Berhasil', 'Catatan berhasil ditambahkan.', 'success');
             header('Location: ' . BASEURL . '/dashboard');
             exit;
 
         } catch (Exception $e) {
-            if (file_exists($pdfFilePath)) {
-                unlink($pdfFilePath);
+            if (file_exists($pdfFilePathForUnlink)) {
+                unlink($pdfFilePathForUnlink);
             }
             if ($thumbnailFileName !== null && file_exists('./uploads/thumbnails/' . $thumbnailFileName)) {
                 unlink('./uploads/thumbnails/' . $thumbnailFileName);
             }
-
+            
             unset($_SESSION['note_preview_data']);
             Flasher::setFlash('Terjadi Kesalahan', $e->getMessage(), 'danger');
-            header('Location: ' . BASEURL . '/notes/add'); 
+            header('Location: ' . BASEURL . '/notes/add');
             exit;
         }
     }

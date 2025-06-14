@@ -340,6 +340,9 @@
   .h-96 {
     height: calc(var(--spacing) * 96);
   }
+  .h-\[25rem\] {
+    height: 25rem;
+  }
   .h-screen {
     height: 100vh;
   }
