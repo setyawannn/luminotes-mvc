@@ -33,5 +33,4 @@ class User_model extends Model {
                 VALUES ('$name', '$email', '$password', $desc, '$role')";
         return $this->db->query($sql);
     }
-
 }
