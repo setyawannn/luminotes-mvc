@@ -1,26 +1,19 @@
 <?php
 
 class Home extends Controller {
-    public function index() {
+
+    public function __construct()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            Flasher::setFlash('Akses ditolak!', 'Silakan login terlebih dahulu.', 'danger');
+            header('Location: ' . BASEURL . '/auth/login');
+            exit;
+        }
+    }
+    public function index()
+    {
         $data['judul'] = 'Home';
-        $data['nama'] = "Luminotes";
-
-        $searchQuery = $_GET['search'] ?? '';
-        $filterTopic = $_GET['topic'] ?? '';
-        $startDate = $_GET['start_date'] ?? '';
-        $endDate = $_GET['end_date'] ?? '';
-        $ratingOperator = $_GET['rating_op'] ?? '';
-        $ratingValue = $_GET['rating_val'] ?? '';
-
-        $data['notes'] = $this->model('Note_model')->getFilteredNotes(
-            $searchQuery,
-            $filterTopic,
-            $startDate,
-            $endDate,
-            $ratingOperator,
-            $ratingValue
-        );
-
+        $data['nama'] = 'John Doe';
         $this->view('templates/header', $data);
         $this->view('home/index', $data);
         $this->view('templates/footer');

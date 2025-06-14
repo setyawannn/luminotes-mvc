@@ -38,9 +38,8 @@ class Flasher {
                     $borderColor = 'border-blue-200';
                     break;
             }
-
-            // Tampilan Flasher menggunakan Tailwind CSS
-            echo '<div class="rounded-md border ' . $borderColor . ' ' . $bgColor . ' px-4 py-3 relative mb-4" role="alert">
+            
+            echo '<div class="rounded-md border ' . $borderColor . ' ' . $bgColor . ' px-4 py-3 absolute mb-4" role="alert">
                     <div class="flex">
                         <div class="py-1">
                             <svg class="fill-current h-6 w-6 ' . $textColor . ' mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
