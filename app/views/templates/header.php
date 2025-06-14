@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Halaman <?= $data['judul']; ?></title>
-    <link rel="stylesheet" href="<?= BASEURL; ?>/css/tailwind.css">
+    <link rel="stylesheet" href="<?= BASEURL; ?>/css/tailwind.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?= BASEURL; ?>/css/style.css?v=<?php echo time(); ?>">
 </head>
 <body class="bg-gray-50">
 

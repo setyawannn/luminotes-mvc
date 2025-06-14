@@ -3,7 +3,7 @@
 class Home extends Controller {
     public function index() {
         $data['judul'] = 'Home';
-        $data['nama'] = $this->model('User_model')->getUser();
+        $data['nama'] = "Luminotes";
 
         $searchQuery = $_GET['search'] ?? '';
         $filterTopic = $_GET['topic'] ?? '';

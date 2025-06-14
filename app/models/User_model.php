@@ -1,25 +1,36 @@
 <?php
 
-class User_model {
-    private $table = 'users';
-    private $db;
-
-    public function __construct()
+class User_model extends Model { 
+    public function getUserByEmail($email)
     {
-        $this->db = new Database;
+        $escapedEmail = $this->db->real_escape_string($email);
+        
+        $sql = "SELECT * FROM users WHERE email = '$escapedEmail'";
+        
+        $result = $this->db->query($sql);
+        
+       
+        $rows = $result->fetch_all(MYSQLI_ASSOC); 
+        
+        return $rows[0] ?? false; 
     }
 
-    public function getUser()
+    public function createUser($data)
     {
-        $this->db->query("SELECT name FROM " . $this->table . " LIMIT 1");
-        $result = $this->db->single();
-        return $result ? $result['name'] : '';
-    }
+        $name = $this->db->real_escape_string($data['name']);
+        $email = $this->db->real_escape_string($data['email']);
+        $password = $this->db->real_escape_string($data['password']);
+        
+        $desc = "NULL";
+        if (isset($data['description']) && $data['description'] !== null) {
+            $escapedDescription = $this->db->real_escape_string($data['description']);
+            $desc = "'$escapedDescription'";
+        }
+        
+        $role = 'user'; 
 
-    public function getUserById($id)
-    {
-        $this->db->query("SELECT * FROM " . $this->table . " WHERE id = :id");
-        $this->db->bind(':id', $id);
-        return $this->db->single();
+        $sql = "INSERT INTO users (name, email, password, description, role) 
+                VALUES ('$name', '$email', '$password', $desc, '$role')";
+        return $this->db->query($sql);
     }
 }
