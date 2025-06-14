@@ -54,3 +54,6 @@ yarn-error.log*
 
 # Local configuration files
 config.local.php
+
+# Uploads files
+public/uploads/

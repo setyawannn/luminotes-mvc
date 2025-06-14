@@ -5,40 +5,141 @@ class Notes extends Controller {
         $data['judul'] = 'Detail Catatan';
         $data['note'] = $this->model('Note_model')->getNoteById($id);
 
-        // Jika catatan tidak ditemukan, arahkan kembali ke halaman home
         if (!$data['note']) {
             header('Location: ' . BASEURL . '/home');
             exit;
         }
 
-        // Memuat view detail catatan
-        $this->view('templates/header', $data); // Asumsi ada header umum
-        $this->view('notes/detail', $data); // Memuat view detail catatan
-        $this->view('templates/footer'); // Asumsi ada footer umum
+        $this->view('templates/header', $data); 
+        $this->view('notes/detail', $data);
+        $this->view('templates/footer'); 
     }
 
-    // Anda bisa menambahkan metode lain seperti add(), edit(), delete() di sini
     public function add() {
-        $data['judul'] = 'Tambah Catatan';
+        $data['judul'] = 'Add Notes';
+        $data['teams'] = $this->model('Team_model')->getAllTeam();
+
         $this->view('templates/header', $data);
-        $this->view('notes/add', $data); // View untuk form tambah catatan (Anda perlu membuatnya)
+        $this->view('notes/add', $data);
         $this->view('templates/footer');
     }
 
-    // Metode untuk memproses penambahan catatan
-    public function create() {
-        if ($this->model('Note_model')->addNote($_POST) > 0) {
-            Flasher::setFlash('Berhasil', 'ditambahkan', 'success');
-            header('Location: ' . BASEURL . '/home');
+     public function preview() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASEURL . '/notes/add');
             exit;
-        } else {
-            Flasher::setFlash('Gagal', 'ditambahkan', 'danger');
-            header('Location: ' . BASEURL . '/home');
+        }
+
+        try {
+            if (!isset($_FILES['pdf_file']) || $_FILES['pdf_file']['error'] !== UPLOAD_ERR_OK) {
+                throw new Exception("File PDF wajib diupload atau terjadi error saat upload.");
+            }
+
+            $fileTmpPath = $_FILES['pdf_file']['tmp_name'];
+            $fileName = $_FILES['pdf_file']['name'];
+            $fileNameCmps = explode(".", $fileName);
+            $fileExtension = strtolower(end($fileNameCmps));
+            if ($fileExtension !== 'pdf') {
+                throw new Exception("Hanya file dengan format .pdf yang diizinkan.");
+            }
+
+            $pdfFileName = md5(time() . $fileName) . '.' . $fileExtension;
+            $uploadFileDir = './uploads/notes/'; 
+            $dest_path = $uploadFileDir . $pdfFileName;
+
+            if (!move_uploaded_file($fileTmpPath, $dest_path)) {
+                throw new Exception("Gagal memindahkan file PDF yang diupload. Periksa izin folder.");
+            }
+
+            $_SESSION['note_preview_data'] = [
+                'title' => $_POST['title'],
+                'description' => $_POST['description'],
+                'topics' => $_POST['topics'],
+                'is_public' => $_POST['is_public'],
+                'team_id' => !empty($_POST['team_id']) ? $_POST['team_id'] : null,
+                'pdf_file' => BASEURL . '/uploads/notes/' . $pdfFileName 
+            ];
+            
+            $data['judul'] = 'Preview Catatan';
+            $data['preview_data'] = $_SESSION['note_preview_data'];
+            
+            $this->view('templates/header', $data);
+            $this->view('notes/preview', $data);
+            $this->view('templates/footer');
+
+        } catch (Exception $e) {
+            Flasher::setFlash('Gagal', $e->getMessage(), 'danger');
+            header('Location: ' . BASEURL . '/notes/add');
             exit;
         }
     }
 
-    // Metode untuk memproses penghapusan catatan
+    public function store() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['note_preview_data'])) {
+            Flasher::setFlash('Gagal', 'Alur pengiriman tidak valid atau sesi telah berakhir.', 'danger');
+            header('Location: ' . BASEURL . '/notes/add');
+            exit;
+        }
+
+        $thumbnailFileName = null;
+        $pdfFilePath = './uploads/notes/' . $_SESSION['note_preview_data']['pdf_file'];
+
+        try {
+            if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] === UPLOAD_ERR_OK) {
+                $fileTmpPath = $_FILES['thumbnail']['tmp_name'];
+                $fileName = $_FILES['thumbnail']['name'];
+                $fileNameCmps = explode(".", $fileName);
+                $fileExtension = strtolower(end($fileNameCmps));
+                $allowedImageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+                if (!in_array($fileExtension, $allowedImageExtensions)) {
+                    throw new Exception("Format thumbnail tidak valid. Hanya gambar (jpg, png, gif) yang diizinkan.");
+                }
+
+                $thumbnailFileName = md5(time() . 'thumb' . $fileName) . '.' . $fileExtension;
+                $uploadFileDir = './uploads/thumbnails/';
+                $dest_path = $uploadFileDir . $thumbnailFileName;
+
+                if(!move_uploaded_file($fileTmpPath, $dest_path)) {
+                    throw new Exception("Gagal mengupload thumbnail.");
+                }
+            }
+
+            $finalData = [
+                'title' => $_SESSION['note_preview_data']['title'],
+                'description' => $_SESSION['note_preview_data']['description'],
+                'category' => $_SESSION['note_preview_data']['topics'],
+                'is_public' => $_SESSION['note_preview_data']['is_public'],
+                'team_id' => $_SESSION['note_preview_data']['team_id'],
+                'file' => $_SESSION['note_preview_data']['pdf_file'],
+                'thumbnail' => BASEURL . '/uploads/thumbnails/' . $thumbnailFileName,
+                'status' => 'pending',
+                'creator_id' => $_SESSION['user_id']
+            ];
+
+            if ($this->model('Note_model')->addNote($finalData) <= 0) {
+                throw new Exception("Gagal menyimpan data catatan ke database.");
+            }
+
+            unset($_SESSION['note_preview_data']); 
+            Flasher::setFlash('Berhasil', 'Catatan berhasil ditambahkan.', 'success');
+            header('Location: ' . BASEURL . '/dashboard');
+            exit;
+
+        } catch (Exception $e) {
+            if (file_exists($pdfFilePath)) {
+                unlink($pdfFilePath);
+            }
+            if ($thumbnailFileName !== null && file_exists('./uploads/thumbnails/' . $thumbnailFileName)) {
+                unlink('./uploads/thumbnails/' . $thumbnailFileName);
+            }
+
+            unset($_SESSION['note_preview_data']);
+            Flasher::setFlash('Terjadi Kesalahan', $e->getMessage(), 'danger');
+            header('Location: ' . BASEURL . '/notes/add'); 
+            exit;
+        }
+    }
+
     public function delete($id) {
         if ($this->model('Note_model')->deleteNote($id) > 0) {
             Flasher::setFlash('Berhasil', 'dihapus', 'success');
@@ -50,8 +151,8 @@ class Notes extends Controller {
             exit;
         }
     }
+    
 
-    // Metode untuk menampilkan form edit catatan
     public function edit($id) {
         $data['judul'] = 'Edit Catatan';
         $data['note'] = $this->model('Note_model')->getNoteById($id);
@@ -62,11 +163,10 @@ class Notes extends Controller {
         }
 
         $this->view('templates/header', $data);
-        $this->view('notes/edit', $data); // View untuk form edit catatan
+        $this->view('notes/edit', $data);
         $this->view('templates/footer');
     }
 
-    // Metode untuk memproses pembaruan catatan
     public function update() {
         if ($this->model('Note_model')->updateNote($_POST) > 0) {
             Flasher::setFlash('Berhasil', 'diupdate', 'success');

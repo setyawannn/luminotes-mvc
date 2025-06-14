@@ -16,7 +16,7 @@
       <?php foreach($data['notes'] as $note): ?>
       <a href="<?= BASEURL; ?>/dashboard/notes/detail/<?= $note['id']; ?>">
         <div class="flex gap-x-3 items-center">
-          <img class="w-8 h-8 rounded-full object-cover" src="<?= BASEURL; ?>/img/person/<?= $note['creator']['img']; ?>" alt="<?= $note['creator']['name']; ?>">
+          <img class="w-8 h-8 rounded-full object-cover" src="<?= BASEURL?>/img/person/person1.png" alt="<?= $note['creator']['name']; ?>">
           <p><?= $note['creator']['name']; ?></p>
         </div>
         <div class="flex justify-between gap-x-4">
@@ -25,7 +25,7 @@
             <p><?= $note['description']; ?></p>
           </div>
           <div class="w-1/3">
-            <img src="<?= BASEURL; ?>/img/thubmnail/<?= $note['thumbnail']; ?>" alt="<?= $note['category']; ?>">
+            <img src="<?= $note['thumbnail']; ?>" alt="<?= $note['category']; ?>">
             <p class="rounded-full text-sm border-2 p-1 mt-3 w-fit text-center"><?= $note['category']; ?></p>
           </div>
         </div>
@@ -42,7 +42,7 @@
       </a>
       <?php endforeach; ?>
     </div>
-    <a href="<?= BASEURL; ?>/dashboard/notes/add" class="fixed bottom-8 right-8 border-2 p-2 rounded">
+    <a href="<?= BASEURL; ?>/notes/add" class="fixed bottom-8 right-8 border-2 p-2 rounded">
       <img src="<?= BASEURL; ?>/img/icons/add.svg" alt="Add Note">
     </a>
     <div id="modal"
