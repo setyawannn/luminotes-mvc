@@ -82,7 +82,6 @@
             </div>
         </div>
     <?php else: ?>
-        <!-- Pesan jika catatan tidak ditemukan -->
         <div class="text-center mt-20">
             <h1 class="text-2xl text-red-500">Catatan tidak ditemukan!</h1>
             <p class="mt-4">Mohon maaf, catatan yang Anda cari tidak ada.</p>
@@ -140,7 +139,6 @@
                 }
             });
 
-            // Logika bintang rating
             ratingStarsContainer.addEventListener('click', function(event) {
                 if (event.target.classList.contains('star-icon')) {
                     selectedRating = parseInt(event.target.dataset.value);
@@ -151,18 +149,15 @@
             function updateStars(rating) {
                 Array.from(ratingStarsContainer.children).forEach((star, index) => {
                     if (index < rating) {
-                        star.src = "<?= BASEURL ?>/img/icons/star-filled.svg"; // Bintang terisi
+                        star.src = "<?= BASEURL ?>/img/icons/star-filled.svg"; 
                     } else {
-                        star.src = "<?= BASEURL ?>/img/icons/star.svg"; // Bintang kosong
+                        star.src = "<?= BASEURL ?>/img/icons/star.svg"; 
                     }
                 });
             }
 
-            // Penanganan pengiriman rating (saat ini hanya log ke konsol)
             submitRatingButton.addEventListener('click', function() {
                 console.log("Submit Rating:", selectedRating);
-                // Di sini Anda akan mengirim rating ke server (misalnya melalui AJAX)
-                // Contoh:
                 fetch('<?= BASEURL ?>/api/submit-rating', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -172,7 +167,6 @@
                 .then(data => {
                     console.log('Rating submitted:', data);
                     closeModal();
-                    // Mungkin perbarui tampilan rating di halaman
                 })
                 .catch(error => console.error('Error submitting rating:', error));
                 closeModal();

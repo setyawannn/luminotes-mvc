@@ -4,7 +4,6 @@ class Notes extends Controller {
 
     public function __construct() {
         if (!isset($_SESSION['user_id'])) {
-            Flasher::setFlash('Akses ditolak!', 'Silakan login terlebih dahulu.', 'danger');
             header('Location: ' . BASEURL . '/auth/login');
             exit;
         }
@@ -88,7 +87,6 @@ class Notes extends Controller {
             $this->view('templates/footer');
 
         } catch (Exception $e) {
-            Flasher::setFlash('Gagal', $e->getMessage(), 'danger');
             header('Location: ' . BASEURL . '/notes/add');
             exit;
         }
@@ -96,7 +94,6 @@ class Notes extends Controller {
 
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['note_preview_data'])) {
-            Flasher::setFlash('Gagal', 'Alur pengiriman tidak valid atau sesi telah berakhir.', 'danger');
             header('Location: ' . BASEURL . '/notes/add');
             exit;
         }
@@ -150,7 +147,6 @@ class Notes extends Controller {
             }
 
             unset($_SESSION['note_preview_data']);
-            Flasher::setFlash('Berhasil', 'Catatan berhasil ditambahkan.', 'success');
             header('Location: ' . BASEURL . '/dashboard');
             exit;
 
@@ -163,7 +159,6 @@ class Notes extends Controller {
             }
             
             unset($_SESSION['note_preview_data']);
-            Flasher::setFlash('Terjadi Kesalahan', $e->getMessage(), 'danger');
             header('Location: ' . BASEURL . '/notes/add');
             exit;
         }
@@ -171,11 +166,9 @@ class Notes extends Controller {
 
     public function delete($id) {
         if ($this->model('Note_model')->deleteNote($id) > 0) {
-            Flasher::setFlash('Berhasil', 'dihapus', 'success');
             header('Location: ' . BASEURL . '/home');
             exit;
         } else {
-            Flasher::setFlash('Gagal', 'dihapus', 'danger');
             header('Location: ' . BASEURL . '/home');
             exit;
         }
@@ -198,11 +191,9 @@ class Notes extends Controller {
 
     public function update() {
         if ($this->model('Note_model')->updateNote($_POST) > 0) {
-            Flasher::setFlash('Berhasil', 'diupdate', 'success');
             header('Location: ' . BASEURL . '/home');
             exit;
         } else {
-            Flasher::setFlash('Gagal', 'diupdate', 'danger');
             header('Location: ' . BASEURL . '/home');
             exit;
         }

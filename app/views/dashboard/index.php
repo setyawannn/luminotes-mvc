@@ -42,7 +42,7 @@
       </a>
       <?php endforeach; ?>
     </div>
-    <a href="<?= BASEURL; ?>/notes/add" class="fixed bottom-8 right-8 border-2 p-2 rounded">
+    <a href="<?= BASEURL; ?>/notes/add" class="fixed bottom-8 right-8 border-2 p-2 rounded bg-white">
       <img src="<?= BASEURL; ?>/img/icons/add.svg" alt="Add Note">
     </a>
     <div id="modal"
