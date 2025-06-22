@@ -5,7 +5,6 @@ class Teams extends Controller
     public function __construct()
     {
         if (!isset($_SESSION['user_id'])) {
-            Flasher::setFlash('Akses ditolak!', 'Silakan login terlebih dahulu.', 'danger');
             header('Location: ' . BASEURL . '/auth/login');
             exit;
         }
@@ -61,7 +60,6 @@ class Teams extends Controller
             if (!empty($errors)) {
                 $_SESSION['errors'] = $errors;
                 $_SESSION['old_input'] = $data_input;
-                Flasher::setFlash('Validasi Gagal.', 'Periksa kembali inputan Anda.', 'danger');
                 header('Location: ' . BASEURL . '/teams');
                 exit;
             } else {
@@ -72,13 +70,11 @@ class Teams extends Controller
                 ];
 
                 if ($this->model('Team_model')->createTeam($team_data_to_create)) {
-                    Flasher::setFlash('Tim baru', 'berhasil ditambahkan!', 'success');
                     unset($_SESSION['errors']);
                     unset($_SESSION['old_input']);
                     header('Location: ' . BASEURL . '/teams');
                     exit;
                 } else {
-                    Flasher::setFlash('Gagal', 'menambahkan tim baru ke database.', 'danger');
                     $_SESSION['old_input'] = $data_input;
                     header('Location: ' . BASEURL . '/teams');
                     exit;
@@ -113,16 +109,13 @@ class Teams extends Controller
             ];
 
             if ($this->model('Team_model')->updateTeam($data['id'], $data)) {
-                Flasher::setFlash('Tim', 'berhasil diperbarui!', 'success');
                 header('Location: ' . BASEURL . '/teams/detail/' . $id);
                 exit;
             } else {
-                Flasher::setFlash('Gagal', 'memperbarui tim. Tidak ada perubahan atau error.', 'danger');
                 header('Location: ' . BASEURL . '/teams/edit/' . $id);
                 exit;
             }
         } else {
-            Flasher::setFlash('Gagal validasi.', 'Periksa kembali inputan Anda.', 'danger');
             $data['judul'] = 'Edit Team';
             $this->view('templates/auth/header', $data);
             $this->view('profile/teams/edit', $data); 
@@ -147,7 +140,6 @@ class Teams extends Controller
 
     public function processJoin() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            Flasher::setFlash('Aksi tidak valid.', '', 'danger');
             header('Location: ' . BASEURL . '/teams');
             exit;
         }
@@ -155,7 +147,6 @@ class Teams extends Controller
         $teamCode = $_POST['team_code'] ?? '';
 
         if (empty(trim($teamCode))) {
-            Flasher::setFlash('Kode tim', 'tidak boleh kosong.', 'danger');
             header('Location: ' . BASEURL . '/teams');
             exit;
         }
@@ -165,7 +156,6 @@ class Teams extends Controller
         $teamModel = $this->model('Team_model');
         $result = $teamModel->joinTeamByCode($teamCode, $userId);
 
-        Flasher::setFlash($result['message'], '', $result['status']);
         header('Location: ' . BASEURL . '/teams');
         exit;
     }

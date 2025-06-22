@@ -15,7 +15,7 @@
                 <p><?= nl2br($data['preview_data']['description']) ?></p>
             </div>
             <div class="w-1/3">
-                <img src="<?= BASEURL?>/img/thubmnail/placeholder.png" alt="Placeholder">
+                <img id="thumbnail-preview" src="<?= BASEURL?>/img/thubmnail/placeholder.jpg" alt="Placeholder" class="w-full object-cover"> 
                 <p class="rounded-full text-sm border-2 p-1 mt-3 text-center w-fit"><?= $data['preview_data']['topics'] ?></p>
             </div>
         </div>
@@ -25,20 +25,17 @@
 
     <form action="<?= BASEURL ?>/notes/store" method="POST" enctype="multipart/form-data">
         <div class="flex flex-col gap-y-6 mt-10">
-            <div class="flex flex-col gap-y-2">
-                <label for="thumbnail">Thumbnail (Optional)</label>
-                <div class="flex gap-x-4">
-                    <input type="file" name="thumbnail" class="p-2 border w-full rounded" accept="image/*">
-                </div>
+            <label for="thumbnail-input">Thumbnail (Optional)</label> <div class="flex gap-x-4">
+                <input type="file" id="thumbnail-input" name="thumbnail" class="p-2 border w-full rounded" accept="image/*">
             </div>
             <div class="flex flex-col gap-y-2">
                 <div class="flex justify-between items-center">
                     <label for="thubmnail">File Preview</label>
-                    <a href="<?= BASEURL ?>/uploads/notes/<?= $data['preview_data']['pdf_file'] ?>" download class="p-2 rounded border-2">
+                    <a href="<?= $data['preview_data']['pdf_file_url'] ?>" download class="p-2 rounded border-2">
                         <img src="<?= BASEURL?>/img/icons/download.svg" alt="Download">
                     </a>
                 </div>
-                <iframe src="<?= $data['preview_data']['pdf_file'] ?>" frameborder="0" class="w-full h-96 rounded mt-4"></iframe>
+                <iframe src="<?= $data['preview_data']['pdf_file_url'] ?>" frameborder="0" class="w-full h-96 rounded mt-4"></iframe>
             </div>
         </div>
 
@@ -47,3 +44,23 @@
         </div>
     </form>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        const thumbnailInput = document.getElementById('thumbnail-input');
+        const thumbnailPreview = document.getElementById('thumbnail-preview');
+
+        if (thumbnailInput && thumbnailPreview) {
+            thumbnailInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        thumbnailPreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
